@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/amir-belkahla/javascript-nextjs",
+      "type": "http"
+    }
+  }
+}

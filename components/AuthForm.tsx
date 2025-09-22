@@ -20,10 +20,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import CustomInput from './CustomInput'
-import { authformSchema } from '@/lib/utils'
+import { authFormSchema } from '@/lib/utils'
 import { Loader, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getLoggedInUser, signIn, signUp } from '@/lib/actions/user.actions'
+import PlaidLink from './PlaidLink'
 
 
 
@@ -40,7 +41,7 @@ const AuthForm = ({type}:{type:string}) => {
   
 
 
-    const formSchema = authformSchema(type);
+    const formSchema = authFormSchema(type);
     // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,9 +67,25 @@ const AuthForm = ({type}:{type:string}) => {
     
     try {
         // Sign up with appwrite & create a plain link token
+        
         if(type === 'sign-up'){
-             const newUser = await signUp(data);
-
+          const userData = {
+          firstName:data.firstName!,
+          lastName:data.lastName!,
+          address1:data.address1!,
+          city:data.city!, 
+          state:data.state!,
+          postalCode:data.postalCode!,
+          dateOfBirth:data.dateOfBirth!,
+          ssn:data.ssn!,
+          email:data.email,
+          password:data.password,
+        }
+             const newUser = await signUp(userData);
+             if(!newUser){
+              console.error('signUp returned empty response');
+              return;
+             }
              setUser(newUser);
         }
 
@@ -109,9 +126,11 @@ const AuthForm = ({type}:{type:string}) => {
                 </h1>
             </div>
         </header>
-        {user ? (
-        <div className='flex flex-col gap-4'>{/*  PlaidLink  */}</div>
-        ): (
+        {user ? (  
+        <div className='flex flex-col gap-4'>
+          <PlaidLink user={user} variant="primary"/>
+        </div>
+        ): ( 
             <>
             <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -159,7 +178,7 @@ const AuthForm = ({type}:{type:string}) => {
                : 'Already have an account?'}
                </p>
             <Link href={type === 'sign-in' ? '/sign-up'
-                : 'sign-in'} className='form-link'>
+                : '/sign-in'} className='form-link'>
                 {type === 'sign-in' ? 'Sign Up'
                 : 'Sign In'
             }
@@ -167,7 +186,7 @@ const AuthForm = ({type}:{type:string}) => {
                 
          </footer>
             </>
-        )}
+       )} 
     </section>
   )
 }

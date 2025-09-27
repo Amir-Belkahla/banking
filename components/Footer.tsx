@@ -27,7 +27,7 @@ const Footer = ({user,type='desktop'}:FooterProps) => {
             <Image
             src="/icons/logout.svg"
             fill
-            alt="jsm" 
+            alt="logout" 
             />
         </div>
     </footer>
